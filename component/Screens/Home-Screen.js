@@ -1,128 +1,84 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from "react";
+import { Text, View, StyleSheet, Button } from "react-native";
+import { BarCodeScanner } from "expo-barcode-scanner";
 
-import {
-  AppRegistry,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  Linking
-} from 'react-native';
+export default function App() {
+  const [hasPermission, setHasPermission] = useState(null);
+  const [scanned, setScanned] = useState(false);
+  const [openScanner, setOpenScanner] = useState(false);
+  useEffect(() => {
+    (async () => {
+      const { status } = await BarCodeScanner.requestPermissionsAsync();
+      setHasPermission(status === "granted");
+    })();
+  }, []);
 
-import QRCodeScanner from 'react-native-qrcode-scanner';
-import { RNCamera } from 'react-native-camera';
-
-/////// premission off qr
-import * as Permissions from 'expo-permissions';
-
-
-class ScanScreen extends Component {
-  onSuccess = e => {
-    console.log(e)
-    Linking.openURL(e.data).catch(err =>
-      console.error('An error occured', err)
-    );
+  const handleBarCodeScanned = ({ type, data }) => {
+    setScanned(true);
+    alert(`Bar code with type ${type} and data ${data} has been scanned!`);
   };
 
-  render() {
-    return (
-      <QRCodeScanner
-        onRead={this.onSuccess}
-        flashMode={RNCamera.Constants.FlashMode.torch}
-        topContent={
-          <Text style={styles.centerText}>
-            Go to{' '}
-            <Text style={styles.textBold}>wikipedia.org/wiki/QR_code</Text> on
-            your computer and scan the QR code.
-          </Text>
-        }
-        bottomContent={
-          <TouchableOpacity style={styles.buttonTouchable}>
-            <Text style={styles.buttonText}>OK. Got it!</Text>
-          </TouchableOpacity>
-        }
-      />
-    );
+  if (hasPermission === null) {
+    return <Text>Requesting for camera permission</Text>;
   }
+  if (hasPermission === false) {
+    return <Text>No access to camera</Text>;
+  }
+
+  return (
+    <View
+      style={{
+        flex: 1,
+        flexDirection: "column",
+        justifyContent: "flex-end",
+        padding: 15,
+      }}
+    >
+      {/* <View
+        style={{
+          width: "100%",
+          height: 500,
+          backgroundColor: "red",
+        }}
+      > */}
+      {openScanner && (
+        <BarCodeScanner
+          onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
+          style={StyleSheet.absoluteFillObject}
+        />
+      )}
+
+      {!openScanner && (
+        <View>
+          <View
+            style={{
+              width: "100%",
+              height: 500,
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Text
+              style={{ paddingBottom: 20, fontSize: 18, fontWeight: "600" }}
+            >
+              Barcode Scaner
+            </Text>
+            <Text>
+              Put a personal shopper in your pocket with ScanLife so you’ll
+              always get the information you want most. Scan any product
+              barcode, QR Code or Microsoft Tag and we’ll quickly find you more
+              about it including prices, reviews and now even deliver you a list
+              of local stores for purchasing!
+            </Text>
+          </View>
+          <Button title={"Tap to Scan"} onPress={() => setOpenScanner(true)} />
+        </View>
+      )}
+
+      {scanned && (
+        <Button title={"Tap to Scan Again"} onPress={() => setScanned(false)} />
+      )}
+    </View>
+  );
 }
-
-const styles = StyleSheet.create({
-  centerText: {
-    flex: 1,
-    fontSize: 18,
-    padding: 32,
-    color: '#777'
-  },
-  textBold: {
-    fontWeight: '500',
-    color: '#000'
-  },
-  buttonText: {
-    fontSize: 21,
-    color: 'rgb(0,122,255)'
-  },
-  buttonTouchable: {
-    padding: 16
-  }
-});
-
-AppRegistry.registerComponent('default', () => ScanScreen);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// import * as React from 'react';
-// import { Button, View, Text, Image, TextInput } from 'react-native';
-// import Head from './header';
-
-// export default class HomeScreen extends React.Component {
-//   constructor(props) {
-//     super(props);
-//     this.state = {
-//       mytext: '',
-//     }
-//   }
-//   render() {
-
-//     let value = this.state.mytext;
-//     let { name } = this.props.route.params;
-//     let { num } = this.props.route.params;
-
-//     return (<View>
-//       <Text>this is home screen</Text>
-//     </View>
-//       // <View style={{ flex: 1, marginTop: 30 }}>
-//       //   <Head toggleDrawer={this.props.navigation} />
-
-//       //   <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }} >
-//       //     {/* this is just  navigate */}
-//       //     <Button title="Refresh" onPress={() => { this.props.navigation.navigate('Home', { num: Math.floor(Math.random() * 100) }) }} />
-//       //     {/*     this.props.navigation.push  is just i stack navigation not in tab or other */}
-//       //     {/* <Button title="Refresh push" onPress={() => { this.props.navigation.push('Home',{ num: Math.floor(Math.random()*100)})}} /> */}
-//       //     <TextInput placeholder="type text"
-//       //       style={{ height: 30, padding: 2, borderBottomColor: 'gray', borderStyle: 'dashed', borderBottomWidth: 2, }}
-//       //       value={this.state.mytext}
-//       //       onChangeText={(text) => { this.setState({ mytext: text }) }} />
-//       //     <Text>reload Data {num}</Text>
-//       //     <Text>{value === "" ? name : value}</Text>
-//       //     <View style={{ flexDirection: 'row', justifyContent: 'space-evenly' }}>
-//       //       <Button title="About" onPress={() => { this.props.navigation.navigate('About', { mydata: this.state.mytext, defvalue: name }) }} />
-//       //       <Button title="Contact" onPress={() => { this.props.navigation.navigate('Contact', { mydata: this.state.mytext }) }} />
-//       //     </View>
-//       //   </View>
-//       // </View>
-
-//     );
-//   }
-// }

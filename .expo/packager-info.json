@@ -2,9 +2,9 @@
   "devToolsPort": 19002,
   "expoServerPort": 19000,
   "packagerPort": 19001,
-  "packagerPid": 7348,
-  "expoServerNgrokUrl": null,
-  "packagerNgrokUrl": null,
-  "ngrokPid": null,
+  "packagerPid": 23228,
+  "expoServerNgrokUrl": "https://f3-jzf.hmubashar.qrscaner.exp.direct",
+  "packagerNgrokUrl": "https://packager.f3-jzf.hmubashar.qrscaner.exp.direct",
+  "ngrokPid": 13112,
   "webpackServerPort": null
 }
